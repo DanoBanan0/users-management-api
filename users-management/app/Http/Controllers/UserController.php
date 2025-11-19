@@ -92,13 +92,9 @@ class UserController extends Controller
     // this function will delete a specific user by id
     public function destroy(User $userId)
     {
-        $user = User::find($userId);
-        if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
-        }
 
-        $user->delete();
-
+        
+        $userId->delete();
         return response()->json(['message' => 'User deleted successfully']);
     }
 }
