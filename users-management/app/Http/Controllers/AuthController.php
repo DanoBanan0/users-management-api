@@ -45,9 +45,11 @@ class AuthController extends Controller
             'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
-        $credentials = $request->only('email', 'password');
 
-        if (!$token = JWTAuth::attempt($credentials)) {
+        $credentials = $request->only('email', 'password');
+        $token = Auth::attempt($credentials);
+
+        if (!$token) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -59,7 +61,7 @@ class AuthController extends Controller
                 'token' => $token,
                 'type' => 'bearer',
             ]
-        ], 201);
+        ], 200);
     }
 
     public function me()
