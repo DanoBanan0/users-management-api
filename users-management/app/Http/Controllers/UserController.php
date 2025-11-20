@@ -48,11 +48,7 @@ class UserController extends Controller
     // this function will return a specific user by id
     public function show(User $userId)
     {
-        $user = User::find($userId);
-        if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
-        }
-        return response()->json($user);
+        return response()->json($userId);
     }
 
     /**
@@ -61,28 +57,26 @@ class UserController extends Controller
     // this function will update a specific user by id
     public function update(Request $request, User $userId)
     {
-        $user = User::find($userId);
-        if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
-        }
-
         $request->validate([
             'name' => 'sometimes|required|string|max:50',
-            'email' => 'sometimes|required|string|email|max:100|unique:users,email,' . $user->id,
+            'email' => 'sometimes|required|string|email|max:100|unique:users,email,' . $userId->id,
             'password' => 'sometimes|required|string|min:8',
         ]);
 
-        $user->name = $request->name ?? $user->name;
-        $user->email = $request->email ?? $user->email;
-        if ($request->has('password')) {
-            $user->password = Hash::make($request->password);
+        if ($request->has('name')) {
+            $userId->name = $request->name;
         }
-
-        $user->save();
+        if ($request->has('email')) {
+            $userId->email = $request->email;
+        }
+        if ($request->has('password')) {
+            $userId->password = Hash::make($request->password);
+        }
+        $userId->save();
 
         return response()->json([
             'message' => 'User updated successfully',
-            'user' => $user
+            'user' => $userId
         ]);
     }
 
@@ -92,8 +86,6 @@ class UserController extends Controller
     // this function will delete a specific user by id
     public function destroy(User $userId)
     {
-
-        
         $userId->delete();
         return response()->json(['message' => 'User deleted successfully']);
     }
